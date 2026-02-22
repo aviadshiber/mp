@@ -1,0 +1,7 @@
+bin/
+dist/
+completions/
+coverage.out
+*.exe
+*.test
+*.prof
