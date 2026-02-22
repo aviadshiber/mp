@@ -1,6 +1,7 @@
 package client
 
 import (
+	"compress/gzip"
 	"encoding/base64"
 	"fmt"
 	"io"
@@ -9,6 +10,7 @@ import (
 	"net/url"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -117,7 +119,28 @@ func (c *Client) do(method, apiFamily, path string, query url.Values, form url.V
 		}
 	}
 
+	// Transparently decompress gzip responses since we set Accept-Encoding manually.
+	if resp != nil && strings.EqualFold(resp.Header.Get("Content-Encoding"), "gzip") {
+		gz, err := gzip.NewReader(resp.Body)
+		if err != nil {
+			resp.Body.Close()
+			return nil, fmt.Errorf("decompressing gzip response: %w", err)
+		}
+		resp.Body = gzipReadCloser{gz, resp.Body}
+	}
+
 	return resp, nil
+}
+
+// gzipReadCloser wraps a gzip reader so that closing it also closes the underlying body.
+type gzipReadCloser struct {
+	*gzip.Reader
+	underlying io.ReadCloser
+}
+
+func (g gzipReadCloser) Close() error {
+	g.Reader.Close()
+	return g.underlying.Close()
 }
 
 // backoff calculates the wait duration after a 429 response.

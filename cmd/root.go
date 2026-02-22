@@ -67,6 +67,14 @@ with flags or environment variables (MP_PROJECT_ID, MP_REGION, MP_TOKEN).`,
 }
 
 func init() {
+	// Load config file into global viper.
+	home, _ := os.UserHomeDir()
+	if home != "" {
+		viper.SetConfigFile(home + "/.config/mp/config.yaml")
+		viper.SetConfigType("yaml")
+		_ = viper.ReadInConfig() // Ignore error if file doesn't exist yet.
+	}
+
 	// Bind env vars before flag parsing.
 	viper.SetEnvPrefix("MP")
 	viper.AutomaticEnv()
