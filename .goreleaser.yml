@@ -57,6 +57,12 @@ brews:
       owner: aviadshiber
       name: homebrew-tap
       token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+      pull_request:
+        enabled: true
+        base:
+          owner: aviadshiber
+          name: homebrew-tap
+          branch: main
     commit_author:
       name: goreleaser
       email: goreleaser@users.noreply.github.com
