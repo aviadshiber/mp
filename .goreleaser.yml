@@ -61,7 +61,7 @@ brews:
       name: goreleaser
       email: goreleaser@users.noreply.github.com
     commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Version }}"
-    folder: Formula
+    directory: Formula
     homepage: "https://github.com/aviadshiber/mp"
     description: "Mixpanel CLI - query analytics from your terminal"
     license: "MIT"
